@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $login
  * @property string $password
  * @property string $token
+ * @property Role $role
  */
 
 class User extends Model
@@ -24,6 +25,12 @@ class User extends Model
     const token = 'token';
     const created_at = 'created_at';
     const updated_at = 'updated_at';
+    const role_id = 'role_id';
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, self::role_id, Role::id);
+    }
 
     public function verify(string $token): bool
     {

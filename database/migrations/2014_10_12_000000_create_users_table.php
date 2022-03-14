@@ -18,6 +18,13 @@ class CreateUsersTable extends Migration
             $table->string('login')->unique();
             $table->string('password');
             $table->string('token');
+
+            $table
+                ->foreignId('role_id')
+                ->references('id')
+                ->on('roles')
+            ;
+
             $table->timestamps();
         });
     }

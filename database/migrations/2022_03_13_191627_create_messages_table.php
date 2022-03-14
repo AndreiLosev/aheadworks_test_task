@@ -18,7 +18,7 @@ class CreateMessagesTable extends Migration
             $table
                 ->foreignId('author_id')
                 ->references('id')
-                ->on('authors')
+                ->on('roles')
             ;
 
             $table
