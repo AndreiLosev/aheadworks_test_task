@@ -19,16 +19,22 @@ class Auth
         $this->hasher = $hasher;
     }
 
-    public function authentication(string $login, string $password): false|string
+    public function authorization(string $login, string $password): false|string
     {
-        $currentUser = $this->userRepository->findUser($login, $password);
+        $currentUser = $this->userRepository->findUser($login);
 
         if (!$currentUser) {
             return false;
         }
 
+        $isValid = $this->hasher->check($password, $currentUser->password);
+
+        if (!$isValid) {
+            return false;
+        }
+
         $preparetionString = sprintf('%s_%s_%s', $currentUser->id, $currentUser->login, now());
-        $newToken = $$this->hasher->hash($preparetionString);
+        $newToken = $this->hasher->make($preparetionString);
         $currentUser->token = $newToken;
         $currentUser->save();
 

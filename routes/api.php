@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware;
+use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,4 @@ Route::middleware(Middleware\Auth::class)->group(function() {
     });
 });
 
-Route::get('/qwe2', function() {
-    return 'ok_2';
-});
+Route::post('/login', [Controllers\Authoriztion::class, 'authorization']);

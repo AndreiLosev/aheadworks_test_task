@@ -14,12 +14,9 @@ class UserRepository
         $this->user = $user;
     }
 
-    public function findUser(string $login, string $password): Models\User|false
+    public function findUser(string $login): Models\User|false
     {
-        $user = $this->user::where($this->user::login, $login)
-            ->where($this->user::password, $password)
-            ->first()
-        ;
+        $user = $this->user::where($this->user::login, $login)->first();
 
         if (empty($user)) {
             return false;
