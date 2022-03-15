@@ -20,6 +20,7 @@ class CreateAdmin extends Seeder
                 'password' => Hash::make('admin'),
                 'token' => Hash::make('1_admin'),
                 'role_id' => 1,
+                'created_at' => now()
             ]);
     }
 }

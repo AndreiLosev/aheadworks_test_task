@@ -34,6 +34,5 @@ class CreateServerCredentialsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('server_credentials');
     }
 }
