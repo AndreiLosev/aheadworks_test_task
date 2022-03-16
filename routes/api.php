@@ -21,9 +21,7 @@ use App\Http\Controllers;
 // });
 
 Route::middleware(Middleware\Auth::class)->group(function() {
-    Route::get('/qwe', function() {
-        return 'OK';
-    });
+    Route::post('/tiket/create', [Controllers\TiketController::class, 'create']);
 });
 
 Route::post('/login', [Controllers\Authoriztion::class, 'authorization']);

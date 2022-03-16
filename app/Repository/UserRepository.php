@@ -31,6 +31,10 @@ class UserRepository
 
     public function userExists(string $token): bool
     {
+        if ($token === '') {
+            return false;
+        }
+
         $user = $this->user::where($this->user::token, $token)->first();
 
         if (empty($user)) {

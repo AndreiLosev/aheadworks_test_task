@@ -3,19 +3,17 @@
 namespace App\Services;
 
 use App\Repository;
-use Illuminate\Http\Request;
 use Illuminate\Contracts\Hashing\Hasher;
+use App\Models;
 
 class Auth
 {
     private Repository\UserRepository $userRepository;
-    private Request $request;
     private Hasher $hasher;
 
-    public function __construct(Repository\UserRepository $userRepository, Request $request, Hasher $hasher)
+    public function __construct(Repository\UserRepository $userRepository, Hasher $hasher)
     {
         $this->userRepository = $userRepository;
-        $this->request = $request;
         $this->hasher = $hasher;
     }
 
@@ -33,16 +31,26 @@ class Auth
             return false;
         }
 
-        $preparetionString = sprintf('%s_%s_%s', $currentUser->id, $currentUser->login, now());
-        $newToken = $this->hasher->make($preparetionString);
-        $currentUser->token = $newToken;
+        $currentUser->token = $this->tokenGenerate($currentUser);
         $currentUser->save();
 
-        return $newToken;
+        return $currentUser->token;
     }
 
     public function verification(string $token): bool
     {
         return $this->userRepository->userExists($token);
+    }
+
+    public function logout(Models\User $user): void
+    {
+        $user->token = '';
+        $user->save();
+    }
+
+    private function tokenGenerate(Models\User $user): string
+    {
+        $preparetionString = sprintf('%s_%s_%s', $user->id, $user->login, now());
+        return $this->hasher->make($preparetionString);
     }
 }
