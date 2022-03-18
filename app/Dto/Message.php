@@ -2,8 +2,7 @@
 
 namespace App\Dto;
 
-class TiketDto
+class Message
 {
-    public null|int $id;
     public null|string $content;
 }

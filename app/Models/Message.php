@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 
 /**
  * @property int $id
  * @property Role $author
  * @property Ticket $tiket
- * @property ServerCredentials $serverCredentials
+ * @property Collection<ServerCredentials>|null $serverCredentials
  * @property string $content
  */
 class Message extends Model
