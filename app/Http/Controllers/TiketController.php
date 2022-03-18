@@ -6,8 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Services;
 use App\Dto;
-use App\Models;
-
 
 class TiketController extends Controller
 {
@@ -42,10 +40,23 @@ class TiketController extends Controller
         $message->content = $validated['message'];
 
         $serverCredentials = new Dto\ServerCredentials();
-        $serverCredentials->ftp_login = $validated['ftp_login'];
-        $serverCredentials->ftp_password = $validated['ftp_password'];
+        $serverCredentials->ftp_login = $validated['ftp_login'] ?? '';
+        $serverCredentials->ftp_password = $validated['ftp_password'] ?? '';
 
+        $result = $this->tiketServis->createTikent($tiket, $message, $serverCredentials);
 
+        if ($result->isSucsses) {
+            $this->response->setStatusCode($this->response::HTTP_CREATED);
+            return $this->response;
+        }
+
+        if ($result->isClientError) {
+            $this->response->setStatusCode($this->response::HTTP_BAD_REQUEST);
+        } else {
+            $this->response->setStatusCode($this->response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        $this->response->setContent(['errorMessage' => $result->error->getMessage()]);
 
         return $this->response;
     }

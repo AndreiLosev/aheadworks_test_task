@@ -3,17 +3,13 @@
 namespace App\Repository;
 
 use App\Models;
-use Illuminate\Container\Container;
-
 class UserRepository
 {
     private Models\User $user;
-    private Container $container;
 
-    public function __construct(Models\User $user, Container $container)
+    public function __construct(Models\User $user)
     {
         $this->user = $user;
-        $this->container = $container;
     }
 
     public function findUser(string $login): Models\User|false
@@ -24,12 +20,10 @@ class UserRepository
             return false;
         }
 
-        $this->container->singleton(Models\User::class, fn($app) => $user);
-
-        return $this->container->make(Models\User::class);
+        return $user;
     }
 
-    public function userExists(string $token): bool
+    public function userExists(string $token): Models\User|false
     {
         if ($token === '') {
             return false;
@@ -41,8 +35,6 @@ class UserRepository
             return false;
         }
 
-        $this->container->singleton(Models\User::class, fn($app) => $user);
-
-        return true;
+        return $user;
     }
 }

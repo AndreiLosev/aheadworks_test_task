@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Lcobucci\JWT;
+use App\Services;
+use App\Repository;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->singleton(Services\Auth::class, function($app) {
+            return new Services\Auth(
+                $app->make(Repository\UserRepository::class),
+                $app->make(Hasher::class),
+            );
+        });
     }
 
     /**

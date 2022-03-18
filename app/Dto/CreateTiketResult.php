@@ -3,8 +3,9 @@
 namespace App\Dto;
 
 
-class CreateTikentResult
+class CreateTiketResult
 {
     public bool $isSucsses;
-    public string $errorMessage;
+    public \Throwable $error;
+    public bool $isClientError;
 }

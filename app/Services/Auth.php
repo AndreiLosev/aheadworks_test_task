@@ -10,6 +10,7 @@ class Auth
 {
     private Repository\UserRepository $userRepository;
     private Hasher $hasher;
+    private null|Models\User $currentUser;
 
     public function __construct(Repository\UserRepository $userRepository, Hasher $hasher)
     {
@@ -19,27 +20,29 @@ class Auth
 
     public function authorization(string $login, string $password): false|string
     {
-        $currentUser = $this->userRepository->findUser($login);
+        $this->currentUser = $this->userRepository->findUser($login);
 
-        if (!$currentUser) {
+        if (!$this->currentUser) {
             return false;
         }
 
-        $isValid = $this->hasher->check($password, $currentUser->password);
+        $isValid = $this->hasher->check($password, $this->currentUser->password);
 
         if (!$isValid) {
             return false;
         }
 
-        $currentUser->token = $this->tokenGenerate($currentUser);
-        $currentUser->save();
+        $this->currentUser->token = $this->tokenGenerate($this->currentUser);
+        $this->currentUser->save();
 
-        return $currentUser->token;
+        return $this->currentUser->token;
     }
 
     public function verification(string $token): bool
     {
-        return $this->userRepository->userExists($token);
+        $this->currentUser = $this->userRepository->userExists($token);
+
+        return empty($this->currentUser) ? false : true;
     }
 
     public function logout(Models\User $user): void
@@ -52,5 +55,10 @@ class Auth
     {
         $preparetionString = sprintf('%s_%s_%s', $user->id, $user->login, now());
         return $this->hasher->make($preparetionString);
+    }
+
+    public function getCurrentUser(): Models\User|null
+    {
+        return $this->currentUser;
     }
 }
