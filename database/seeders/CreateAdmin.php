@@ -17,6 +17,7 @@ class CreateAdmin extends Seeder
         DB::table('users')
             ->insert([
                 'login' => 'admin',
+                'email' => 'admin@admin.com',
                 'password' => Hash::make('admin'),
                 'token' => Hash::make('1_admin'),
                 'role_id' => 1,

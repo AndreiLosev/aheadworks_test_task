@@ -2,6 +2,7 @@
 
 namespace App\Dto;
 
+use App\Models;
 
 class CreateTiketResult
 {

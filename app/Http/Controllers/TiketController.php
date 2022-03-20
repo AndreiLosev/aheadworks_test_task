@@ -4,21 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Foundation\Bus;
 use App\Services;
 use App\Dto;
+use App\Jobs;
+use App\Mail;
 
 class TiketController extends Controller
 {
     private Services\Tiket $tiketServis;
     private Response $response;
 
-    public function __construct(Services\Tiket $tiketServis, Response $response)
-    {
+    public function __construct(
+        Services\Tiket $tiketServis,
+        Response $response,
+    ) {
         $this->tiketServis = $tiketServis;
         $this->response = $response;
     }
 
-    public function create(Request $request): Response
+    public function create(Request $request, Mail\NewTiket $tiketmail): Response
+    {
+        [$tiket, $message, $serverCredentials] = $this->validateCreateTiket($request);
+
+        $result = $this->tiketServis->createTikent($tiket, $message, $serverCredentials);
+
+        if (!$result->isSucsses) {
+            if ($result->isClientError) {
+                $this->response->setStatusCode($this->response::HTTP_BAD_REQUEST);
+            } else {
+                $this->response->setStatusCode($this->response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+            $this->response->setContent(['errorMessage' => $result->error->getMessage()]);
+            return $this->response;
+        }
+
+        $this->tiketServis->runJob($tiketmail);
+        $this->response->setStatusCode($this->response::HTTP_CREATED);
+
+        return $this->response;
+    }
+
+    private function validateCreateTiket(Request $request): array
     {
         $validated = $request->validate([
             'uid' => ['required', 'string'],
@@ -43,21 +70,6 @@ class TiketController extends Controller
         $serverCredentials->ftp_login = $validated['ftp_login'] ?? '';
         $serverCredentials->ftp_password = $validated['ftp_password'] ?? '';
 
-        $result = $this->tiketServis->createTikent($tiket, $message, $serverCredentials);
-
-        if ($result->isSucsses) {
-            $this->response->setStatusCode($this->response::HTTP_CREATED);
-            return $this->response;
-        }
-
-        if ($result->isClientError) {
-            $this->response->setStatusCode($this->response::HTTP_BAD_REQUEST);
-        } else {
-            $this->response->setStatusCode($this->response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
-        $this->response->setContent(['errorMessage' => $result->error->getMessage()]);
-
-        return $this->response;
+        return [$tiket, $message, $serverCredentials];
     }
 }

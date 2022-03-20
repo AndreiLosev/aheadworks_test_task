@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Client\Factory as HttpClient;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,3 +19,4 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return view('welcome');
 });
+

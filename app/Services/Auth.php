@@ -40,9 +40,15 @@ class Auth
 
     public function verification(string $token): bool
     {
-        $this->currentUser = $this->userRepository->userExists($token);
+        $user = $this->userRepository->userExists($token);
 
-        return empty($this->currentUser) ? false : true;
+        if (empty($user)) {
+            return false;
+        }
+
+        $this->currentUser = $user;
+
+        return true;
     }
 
     public function logout(Models\User $user): void

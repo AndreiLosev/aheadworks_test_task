@@ -8,8 +8,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Database\Connection;
 use App\Dto;
 use App\Services;
-use Error;
-use RuntimeException;
+use App\Mail;
 
 class Tiket
 {
@@ -19,6 +18,7 @@ class Tiket
     private Services\Auth $auth;
     private Hasher $hasher;
     private Connection $conn;
+    private \Closure $dispachJob;
 
     public function __construct(
         Models\Ticket $tiket,
@@ -27,6 +27,7 @@ class Tiket
         Services\Auth $auth,
         Hasher $hasher,
         Connection $conn,
+        \Closure $dispachJob,
     ) {
         $this->tiket = $tiket;
         $this->message = $message;
@@ -34,6 +35,7 @@ class Tiket
         $this->auth = $auth;
         $this->hasher = $hasher;
         $this->conn = $conn;
+        $this->dispachJob = $dispachJob;
     }
 
     public function createTikent(Dto\Tiket $tiket, Dto\Message $message, ?Dto\ServerCredentials $serverCredentials): Dto\CreateTiketResult
@@ -72,6 +74,12 @@ class Tiket
         }
 
         return $result;
+    }
+
+    public function runJob(Mail\NewTiket $tiketMail): void
+    {
+        $foo = $this->dispachJob;
+        $foo($this->tiket, $tiketMail->setData($this->tiket));
     }
 
     private function isDuplicatUidException(\Throwable $e): bool

@@ -6,19 +6,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-
+use App\Models;
 class NewTiket extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    private Models\Ticket $tiket;
+
+    public function setData(Models\Ticket $tiket): self
     {
-        //
+        $this->tiket = $tiket;
+
+        return $this;
     }
 
     /**
@@ -28,6 +27,10 @@ class NewTiket extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        return $this
+            ->to($this->tiket->user_email, $this->tiket->user_name)
+            ->with('messeges', $this->tiket->messages->map(fn(Models\Message $i) => $i->content))
+            ->view('emails.tiket')
+        ;
     }
 }
