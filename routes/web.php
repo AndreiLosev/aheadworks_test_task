@@ -16,7 +16,5 @@ use Illuminate\Http\Client\Factory as HttpClient;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+Route::view('/{path?}', 'index');
 
