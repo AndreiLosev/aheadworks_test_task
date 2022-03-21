@@ -1,6 +1,6 @@
 module.exports = (env, option) => ({
     mode: 'development',
-    entry: './resources/src/index.jsx',
+    entry: ['babel-polyfill', './resources/src/index.jsx'],
     output: {
         filename: './public/js/app.js',
         path: __dirname,

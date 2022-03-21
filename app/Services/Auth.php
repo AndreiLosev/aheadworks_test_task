@@ -20,18 +20,21 @@ class Auth
 
     public function authorization(string $login, string $password): false|string
     {
-        $this->currentUser = $this->userRepository->findUser($login);
+        $user = $this->userRepository->findUser($login);
 
-        if (!$this->currentUser) {
+        if (!$user) {
             return false;
         }
 
-        $isValid = $this->hasher->check($password, $this->currentUser->password);
+
+
+        $isValid = $this->hasher->check($password, $user->password);
 
         if (!$isValid) {
             return false;
         }
 
+        $this->currentUser = $user;
         $this->currentUser->token = $this->tokenGenerate($this->currentUser);
         $this->currentUser->save();
 

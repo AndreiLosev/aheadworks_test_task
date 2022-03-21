@@ -1,5 +1,5 @@
-export const sendRequest = async (url, token, data) => {
-    return await fetch(`localhost:8000/api/${url}`, {
+export const sendRequest = async (url, data, token) => {
+    return await fetch(`http://localhost:8000/api/${url}`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',

@@ -41,6 +41,7 @@ class TiketController extends Controller
 
         $this->tiketServis->runJob($tiketmail);
         $this->response->setStatusCode($this->response::HTTP_CREATED);
+        $this->response->setContent(['Ok' => "ok"]);
 
         return $this->response;
     }
@@ -51,7 +52,7 @@ class TiketController extends Controller
             'uid' => ['required', 'string'],
             'subject' => ['required', 'string'],
             'user_name' => ['required', 'string'],
-            'user_email' => ['required', 'string'],
+            'user_email' => ['required', 'string', 'email'],
             'message' => ['required', 'string'],
             'ftp_login' => ['string', 'nullable'],
             'ftp_password' => ['string', 'nullable'],

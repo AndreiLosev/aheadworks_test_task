@@ -34,7 +34,7 @@ class Authoriztion extends Controller
 
         $this->response
             ->setStatusCode($this->response::HTTP_OK)
-            ->header('x-auth-token', $token)
+            ->setContent(['x-auth-token' => $token])
         ;
 
         return $this->response;
